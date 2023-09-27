@@ -1,6 +1,7 @@
 from aiogram.utils import executor
 from config import bot, Admins, dp
 from commands import register_commands
+from handlers import price
 import logging
 
 
@@ -11,6 +12,7 @@ async def on_startup(_):
 
 # ===========================================================================
 register_commands(dp)
+price.register_price(dp)
 # ===========================================================================
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
