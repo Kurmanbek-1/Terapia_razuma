@@ -23,17 +23,6 @@ async def price(message: types.Message):
                          "  - На месяц - 2500 сом \n"
                          "  - На 3 месяца - 6000 сом", reply_markup=inline_keyboard)
 
-# Ok
-#
-# Прайс
-#
-#  «Одноразовая сессия»
-#  ⁃ Пробная - 0 сом
-#  ⁃ Вторая и последующие - 500 сом
-#
-# «Полное сопровождение»
-#  ⁃ На месяц - 2500 сом
-#  ⁃ На 3 месяца - 6000 сом
 
 def register_price(dp: Dispatcher):
     dp.register_message_handler(price, commands=["Прайс", "price"])
