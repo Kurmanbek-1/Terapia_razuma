@@ -6,7 +6,7 @@ from aiogram import Dispatcher, types
 async def price(message: types.Message):
     inline_keyboard = types.InlineKeyboardMarkup(row_width=2)
     button1 = types.InlineKeyboardButton("Пробный", callback_data="button_1")
-    button2 = types.InlineKeyboardButton("Последующяя", callback_data="button_2")
+    button2 = types.InlineKeyboardButton("Последующая", callback_data="button_2")
     button3 = types.InlineKeyboardButton("На месяц", callback_data="button_3")
     button4 = types.InlineKeyboardButton("На 3 месяца", callback_data="button_4")
 
