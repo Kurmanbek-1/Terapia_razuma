@@ -5,10 +5,12 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from config import Admins, DESTINATION_DIR
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from handlers import buttons
 
 
 class Pay(StatesGroup):
     receipt = State()
+
 
 async def receipt_test(call: types.CallbackQuery, tariff: str):
     user_id = call.message.chat.id
@@ -16,7 +18,7 @@ async def receipt_test(call: types.CallbackQuery, tariff: str):
                            text=f"Вы выбрали тариф: {tariff}\n"
                                 "Для оплаты выбранного тарифа отправьте, пожалуйста, "
                                 "фото или скриншот квитанции\n\n"
-                                "Для выхода из раздела оплаты нажмите - /exit")
+                                "Для выхода нажмите 'Отмена' снизу  ⬇", reply_markup=buttons.cancel_markup)
     await Pay.receipt.set()
 
 
@@ -26,7 +28,7 @@ async def exit_command(message: types.Message, state: FSMContext):
         return
 
     await state.finish()
-    await message.reply('Вы вышли из раздела оплаты')
+    await message.reply('Вы вышли из раздела оплаты', reply_markup=None)
 
 
 async def process_receipt(message: types.Message, state: FSMContext):
@@ -48,7 +50,8 @@ async def process_receipt(message: types.Message, state: FSMContext):
                              photo=photo,
                              caption=f"Поступила ли оплата от {user_id}",
                              reply_markup=inline_keyboard)
-        await message.answer("Отправлено на проверку админу")
+        await message.answer("Отправлено на проверку администратору!  🙌🏼\n"
+                             "Это займет какое-то время, прошу подождать! ⏳")
     await state.finish()
 
 
@@ -57,7 +60,7 @@ async def answer_yes(call: types.CallbackQuery):
 
     await bot.delete_message(call.message.chat.id, call.message.message_id)
 
-    await bot.send_message(user_id, text="Оплата прошла успешно✅")
+    await bot.send_message(user_id, text="Оплата прошла успешно✅", reply_markup=None)
 
 
 async def answer_no(call: types.CallbackQuery):
@@ -65,8 +68,7 @@ async def answer_no(call: types.CallbackQuery):
 
     await bot.delete_message(call.message.chat.id, call.message.message_id)
 
-    await bot.send_message(user_id, text="Оплата не прошла❌")
-
+    await bot.send_message(user_id, text="Оплата не прошла❌", reply_markup=None)
 
 
 def register_pay_handler(dp: Dispatcher):
@@ -79,11 +81,9 @@ def register_pay_handler(dp: Dispatcher):
     dp.register_callback_query_handler(lambda call: receipt_test(call, "На 3 месяца"),
                                        lambda call: call.data == "button_4")
 
-    dp.register_message_handler(exit_command, state='*', commands='exit')
-    dp.register_message_handler(exit_command, Text(equals='exit', ignore_case=True), state='*')
+    dp.register_message_handler(exit_command, state='*', commands='Отмена')
+    dp.register_message_handler(exit_command, Text(equals='Отмена', ignore_case=True), state='*')
     dp.register_message_handler(process_receipt, state=Pay.receipt,
                                 content_types=types.ContentTypes.PHOTO)
     dp.register_callback_query_handler(answer_yes, lambda call: call.data == "button_yes")
     dp.register_callback_query_handler(answer_no, lambda call: call.data == "button_no")
-
-

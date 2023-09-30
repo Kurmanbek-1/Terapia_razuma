@@ -8,6 +8,6 @@ storage = MemoryStorage()
 bot = Bot(Token)
 dp = Dispatcher(bot=bot, storage=storage)
 
-Admins = [659106628, ]
+Admins = [995712956, ]
 
-DESTINATION_DIR = "C:/projects/Terapia_razuma/media/"
+DESTINATION_DIR = "media/"
