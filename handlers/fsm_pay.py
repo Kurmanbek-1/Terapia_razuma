@@ -55,7 +55,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-async def answer_yes(call: types.CallbackQuery):
+async def answer_yes(call: types.CallbackQuery, state: FSMContext):
     user_id = int(call.message.caption.split()[-1])
 
     await bot.delete_message(call.message.chat.id, call.message.message_id)
