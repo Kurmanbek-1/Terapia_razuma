@@ -8,6 +8,6 @@ storage = MemoryStorage()
 bot = Bot(Token)
 dp = Dispatcher(bot=bot, storage=storage)
 
-Admins = [995712956, ]
+Admins = [659106628, ]
 
 DESTINATION_DIR = "media/"

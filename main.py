@@ -3,11 +3,13 @@ from config import bot, Admins, dp
 from commands import register_commands
 from handlers import price, fsm_pay
 import logging
+from db import ORM
 
 
 # ===========================================================================
 async def on_startup(_):
     await bot.send_message(chat_id=Admins[0], text="Бот запущен!")
+    await ORM.sql_create()
 
 
 # ===========================================================================

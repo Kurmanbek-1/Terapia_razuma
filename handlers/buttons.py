@@ -1,4 +1,5 @@
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram import types
 
 
 cancel_button = KeyboardButton('Отмена')
