@@ -16,6 +16,7 @@ async def on_startup(_):
 register_commands(dp)
 price.register_price(dp)
 fsm_pay.register_pay_handler(dp)
+ORM.sql_get_ORM(dp)
 # ===========================================================================
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)

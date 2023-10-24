@@ -3,12 +3,13 @@ CREATE_TABLE_CHECK = """
     (id INTEGER PRIMARY KEY AUTOINCREMENT,
     tariff VARCHAR(255),
     user_id VARCHAR(255),
-    user_name VARCHAR(255) NULL
+    user_name VARCHAR(255) NULL,
+    photo_check TEXT
     )
 """
 
 INSERT_INTO_TABLE_CHECK = """
-    INSERT INTO Checks(tariff, user_id, user_name) VALUES (?, ?, ?)
+    INSERT INTO Checks(tariff, user_id, user_name, photo_check) VALUES (?, ?, ?, ?)
 """
 
 CREATE_TABLE_PAYMENT_CHECK = """
@@ -27,4 +28,12 @@ INSERT_INTO_TABLE_PAYMENT_REQUEST = """
 
 SELECT_TARIFF_PROBNYI = """
     SELECT COUNT(*) FROM Checks WHERE user_id = ? AND tariff = 'Пробный'
+"""
+
+SELECT_CHECKS_ALL = """
+    SELECT * FROM PaymentRequests
+"""
+
+SELECT_CHECKS_DONE = """
+    SELECT * FROM Checks
 """

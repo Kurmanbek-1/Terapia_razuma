@@ -9,5 +9,3 @@ bot = Bot(Token)
 dp = Dispatcher(bot=bot, storage=storage)
 
 Admins = [659106628, ]
-
-DESTINATION_DIR = "media/"

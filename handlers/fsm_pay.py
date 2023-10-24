@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from config import bot
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
-from config import Admins, DESTINATION_DIR
+from config import Admins
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from handlers import buttons
 from db.ORM import sql_insert_check, sql_insert_payment_request, check_user_has_used_trial
@@ -111,6 +111,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
     user_id = message.chat.id
     username = message.from_user.username
     fullname = message.chat.full_name
+    photo_check = message.photo[-1].file_id
     if not username:
         username = fullname
 
@@ -119,23 +120,20 @@ async def process_receipt(message: types.Message, state: FSMContext):
     button_no = InlineKeyboardButton("Нет❌", callback_data="button_no")
     inline_keyboard.add(button_yes, button_no)
 
-    path = await message.photo[-1].download(
-        destination_dir=DESTINATION_DIR
-    )
     async with state.proxy() as data:
-        data["photo_check"] = path.name
+        data["photo_check"] = photo_check
         data["user_id"] = user_id
         data["user_name"] = username
-    with open(path.name, "rb") as photo:
-        await bot.send_photo(chat_id=Admins[0],
-                             photo=photo,
-                             caption=f"Поступила ли оплата от @{message.from_user.username}\n"
-                                     f"Fullname: {fullname}\n"
-                                     f"Тариф: {data['tariff']}\n"
-                                     f"{user_id}",
-                             reply_markup=inline_keyboard)
-        await message.answer("Отправлено на проверку администратору!  🙌🏼\n"
-                             "Это займет какое-то время, прошу подождать! ⏳")
+
+    await bot.send_photo(chat_id=Admins[0],
+                         photo=photo_check,
+                         caption=f"Поступила ли оплата от @{message.from_user.username}\n"
+                                 f"Fullname: {fullname}\n"
+                                 f"Тариф: {data['tariff']}\n"
+                                 f"{user_id}\n",
+                         reply_markup=inline_keyboard)
+    await message.answer("Отправлено на проверку администратору!  🙌🏼\n"
+                         "Это займет какое-то время, прошу подождать! ⏳")
     await sql_insert_payment_request(state)
     await state.finish()
 
@@ -145,6 +143,7 @@ async def answer_yes(call: types.CallbackQuery, state: FSMContext):
     username = call.message.caption.split()[4]
     tariff = call.message.caption.split()[8]
     fullname = call.message.caption.split()[6]
+    photo_check = call.message.photo[-1].file_id
     if username == "@None":
         username = fullname
 
@@ -152,12 +151,13 @@ async def answer_yes(call: types.CallbackQuery, state: FSMContext):
         data["tariff"] = tariff
         data["user_id"] = user_id
         data["user_name"] = username
-
-    await bot.send_message(user_id, text=f"Оплата прошла успешно✅", reply_markup=None)
+        data["photo_check"] = photo_check
 
     await sql_insert_check(state)
 
     await bot.delete_message(call.message.chat.id, call.message.message_id)
+
+    await bot.send_message(user_id, text=f"Оплата прошла успешно✅", reply_markup=None)
 
 
 async def answer_no(call: types.CallbackQuery):
