@@ -80,7 +80,8 @@ async def probnyi_tariff(call: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         data["tariff"] = tariff
         data["user_id"] = user_id
-        data["user_name"] = username
+        data["user_name"] = f"@{username}"
+        data["photo_check"] = None
 
     await sql_insert_check(state)
     await bot.send_message(user_id, text=f"Вы выбрали тариф: Пробный\n"
@@ -127,7 +128,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
         data["user_id"] = user_id
         data["user_name"] = username
 
-    await bot.send_photo(chat_id=Admins[0] and Admins[1],
+    await bot.send_photo(chat_id=Admins[0],# and Admins[1],
                          photo=photo_check,
                          caption=f"Поступила ли оплата от @{message.from_user.username}\n"
                                  f"Fullname: {fullname}\n"

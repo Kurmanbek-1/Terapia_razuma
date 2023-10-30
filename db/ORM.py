@@ -1,5 +1,4 @@
 import sqlite3
-import types
 from aiogram import types, Dispatcher
 from config import Admins, bot
 
@@ -50,11 +49,18 @@ async def get_done_checks(message: types.Message):
 
     for check in done_checks:
         if message.from_user.id in Admins:
-            await bot.send_photo(chat_id=message.from_user.id,
-                                 photo=check[4],
-                                 caption=f"Тариф: {check[1]}\n"
-                                         f"User ID: {check[2]}\n"
-                                         f"Username: {check[3]}")
+            if check[4] == None:
+                await bot.send_message(chat_id=message.from_user.id,
+                                       text=f"Тариф: {check[1]}\n"
+                                            f"User ID: {check[2]}\n"
+                                            f"Username: {check[3]}")
+            else:
+                await bot.send_photo(chat_id=message.from_user.id,
+                                     photo=check[4],
+                                     caption=f"Тариф: {check[1]}\n"
+                                             f"User ID: {check[2]}\n"
+                                             f"Username: {check[3]}")
+
 
 def sql_get_ORM(dp: Dispatcher):
     dp.register_message_handler(get_all_checks, commands=['checks_all'])
