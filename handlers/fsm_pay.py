@@ -115,7 +115,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
     username = message.from_user.username
     fullname = message.chat.full_name
     photo_check = message.photo[-1].file_id
-    print(photo_check)
+
     if not username:
         username = fullname
 
@@ -125,6 +125,8 @@ async def process_receipt(message: types.Message, state: FSMContext):
     inline_keyboard.add(button_yes, button_no)
 
     async with state.proxy() as data:
+        if data.get("photo_check") is not None:
+            return
         data["photo_check"] = photo_check
         data["user_id"] = user_id
         data["user_name"] = username
