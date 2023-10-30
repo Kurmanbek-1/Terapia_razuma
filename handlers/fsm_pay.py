@@ -115,6 +115,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
     username = message.from_user.username
     fullname = message.chat.full_name
     photo_check = message.photo[-1].file_id
+    print(photo_check)
     if not username:
         username = fullname
 

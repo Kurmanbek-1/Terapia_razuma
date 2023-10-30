@@ -24,7 +24,9 @@ async def sql_insert_check(state):
 
 async def sql_insert_payment_request(state):
     async with state.proxy() as data:
-        cursor.execute(sql_queris.INSERT_INTO_TABLE_PAYMENT_REQUEST, tuple(data.values()))
+        print(data)
+        cursor.execute(sql_queris.INSERT_INTO_TABLE_PAYMENT_REQUEST, (data['tariff'], data['photo_check'],
+                                                                           data['user_id'], data['user_name']))
         db.commit()
 
 async def check_user_has_used_trial(user_id):
