@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from config import bot
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
-from config import Admins
+from config import Admins, Psychologist
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from handlers import buttons
 from db.ORM import sql_insert_check, sql_insert_payment_request, check_user_has_used_trial
@@ -51,6 +51,8 @@ async def check_test(call: types.CallbackQuery, state: FSMContext):
                            text=f"Вы выбрали тариф: {tariff}\n"
                                 "Для оплаты выбранного тарифа отправьте, пожалуйста, "
                                 "фото или скриншот квитанции\n\n"
+                                "Реквизиты - "
+                                "\n\n"
                                 "Для выхода нажмите 'Отмена' снизу  ⬇", reply_markup=buttons.cancel_markup)
     await bot.delete_message(chat_id=call.message.chat.id,
                              message_id=call.message.message_id)
@@ -81,8 +83,8 @@ async def probnyi_tariff(call: types.CallbackQuery, state: FSMContext):
         data["user_name"] = username
 
     await sql_insert_check(state)
-    await bot.send_message(user_id, text="Вы выбрали тариф: Пробный\n"
-                                         "Вот аккаунт психолога - @AldiyarMaylybaev")
+    await bot.send_message(user_id, text=f"Вы выбрали тариф: Пробный\n"
+                                         f"Вот аккаунт психолога - {Psychologist[0]}")
 
     await bot.send_message(chat_id=Admins[0],
                            text=f"Пользователь выбрал тариф: Пробный\n"
@@ -125,7 +127,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
         data["user_id"] = user_id
         data["user_name"] = username
 
-    await bot.send_photo(chat_id=Admins[0],
+    await bot.send_photo(chat_id=Admins[0] and Admins[1],
                          photo=photo_check,
                          caption=f"Поступила ли оплата от @{message.from_user.username}\n"
                                  f"Fullname: {fullname}\n"
@@ -157,7 +159,8 @@ async def answer_yes(call: types.CallbackQuery, state: FSMContext):
 
     await bot.delete_message(call.message.chat.id, call.message.message_id)
 
-    await bot.send_message(user_id, text=f"Оплата прошла успешно✅", reply_markup=None)
+    await bot.send_message(user_id, text=f"Оплата прошла успешно✅\n"
+                                         f"Аккаунт психолога - {Psychologist[0]}", reply_markup=None)
 
 
 async def answer_no(call: types.CallbackQuery):
