@@ -19,8 +19,8 @@ async def tariff_process(message: types.Message):
 
     button1 = types.InlineKeyboardButton("Пробный", callback_data="button_1")
     button2 = types.InlineKeyboardButton("Последующая", callback_data="button_2")
-    button3 = types.InlineKeyboardButton("На месяц", callback_data="button_3")
-    button4 = types.InlineKeyboardButton("На 3 месяца", callback_data="button_4")
+    button3 = types.InlineKeyboardButton("Базовый", callback_data="button_3")
+    button4 = types.InlineKeyboardButton("Продвинутый", callback_data="button_4")
 
     inline_keyboard.add(button1, button2, button3, button4)
 
@@ -39,9 +39,9 @@ async def check_test(call: types.CallbackQuery, state: FSMContext):
     if call.data == "button_2":
         tariff = "Последующая"
     elif call.data == "button_3":
-        tariff = "На-месяц"
+        tariff = "Базовый"
     elif call.data == "button_4":
-        tariff = "На-3-месяца"
+        tariff = "Продвинутый"
 
     if tariff:
         async with state.proxy() as data:
@@ -51,7 +51,10 @@ async def check_test(call: types.CallbackQuery, state: FSMContext):
                            text=f"Вы выбрали тариф: {tariff}\n"
                                 "Для оплаты выбранного тарифа отправьте, пожалуйста, "
                                 "фото или скриншот квитанции\n\n"
-                                "Реквизиты - "
+                                "Реквизиты:\n"
+                                "Мбанк: 4177490173421654\n"
+                                "            +996 774 881 885\n"
+                                "            Расул. У"
                                 "\n\n"
                                 "Для выхода нажмите 'Отмена' снизу  ⬇", reply_markup=buttons.cancel_markup)
     await bot.delete_message(chat_id=call.message.chat.id,
@@ -71,7 +74,7 @@ async def probnyi_tariff(call: types.CallbackQuery, state: FSMContext):
     has_used_trial = await check_user_has_used_trial(user_id)
 
     if has_used_trial:
-        await bot.send_message(user_id, "Извините, вы уже использовали тариф 'Пробный'.")
+        await bot.send_message(user_id, "Извините, вы уже использовали тариф 'Пробный'. ❌")
         return
 
     if not username:
@@ -85,7 +88,7 @@ async def probnyi_tariff(call: types.CallbackQuery, state: FSMContext):
 
     await sql_insert_check(state)
     await bot.send_message(user_id, text=f"Вы выбрали тариф: Пробный\n"
-                                         f"Вот аккаунт психолога - {Psychologist[0]}")
+                                         f"Вот аккаунт психолога - {Psychologist}")
 
     await bot.send_message(chat_id=Admins[0],
                            text=f"Пользователь выбрал тариф: Пробный\n"
@@ -100,6 +103,7 @@ async def probnyi_tariff(call: types.CallbackQuery, state: FSMContext):
 
 async def answer_ok(call: types.CallbackQuery):
     await bot.delete_message(call.message.chat.id, call.message.message_id)
+
 
 async def exit_command(message: types.Message, state: FSMContext):
     current_state = await state.get_state()
@@ -131,7 +135,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
         data["user_id"] = user_id
         data["user_name"] = username
 
-    await bot.send_photo(chat_id=Admins[0],# and Admins[1],
+    await bot.send_photo(chat_id=Admins[0],  # and Admins[1],
                          photo=photo_check,
                          caption=f"Поступила ли оплата от @{message.from_user.username}\n"
                                  f"Fullname: {fullname}\n"
@@ -164,7 +168,7 @@ async def answer_yes(call: types.CallbackQuery, state: FSMContext):
     await bot.delete_message(call.message.chat.id, call.message.message_id)
 
     await bot.send_message(user_id, text=f"Оплата прошла успешно✅\n"
-                                         f"Аккаунт психолога - {Psychologist[0]}", reply_markup=None)
+                                         f"Аккаунт психолога - {Psychologist}", reply_markup=None)
 
 
 async def answer_no(call: types.CallbackQuery):

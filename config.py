@@ -8,5 +8,5 @@ storage = MemoryStorage()
 bot = Bot(Token)
 dp = Dispatcher(bot=bot, storage=storage)
 
-Admins = [659106628, ] #5013185502,
-Psychologist = [6880002882, ]
+Admins = [995712956, 5013185502]
+Psychologist = '@Mindtherapy_phy'
