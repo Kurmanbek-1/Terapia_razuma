@@ -114,3 +114,5 @@ def register_commands(dp: Dispatcher):
     dp.register_message_handler(about_the_service, commands=['about'])
     dp.register_message_handler(service_rules, commands=['rules'])
     dp.register_message_handler(service_support, commands=['support'])
+
+
