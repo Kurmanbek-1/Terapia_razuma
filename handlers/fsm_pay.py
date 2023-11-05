@@ -134,14 +134,14 @@ async def process_receipt(message: types.Message, state: FSMContext):
         data["photo_check"] = photo_check
         data["user_id"] = user_id
         data["user_name"] = username
-
-    await bot.send_photo(chat_id=Admins[0],  # and Admins[1],
-                         photo=photo_check,
-                         caption=f"Поступила ли оплата от @{message.from_user.username}\n"
-                                 f"Fullname: {fullname}\n"
-                                 f"Тариф: {data['tariff']}\n"
-                                 f"{user_id}\n",
-                         reply_markup=inline_keyboard)
+    for admin in Admins:
+        await bot.send_photo(chat_id=admin,
+                             photo=photo_check,
+                             caption=f"Поступила ли оплата от @{message.from_user.username}\n"
+                                     f"Fullname: {fullname}\n"
+                                     f"Тариф: {data['tariff']}\n"
+                                     f"{user_id}\n",
+                             reply_markup=inline_keyboard)
     await message.answer("Отправлено на проверку администратору!  🙌🏼\n"
                          "Это займет какое-то время, прошу подождать! ⏳")
     await sql_insert_payment_request(state)
