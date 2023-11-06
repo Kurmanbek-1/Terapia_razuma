@@ -5,11 +5,14 @@ from handlers import price, fsm_pay
 import logging
 from db import ORM
 
+admins = [Admins[0], Admins[1]]
+
 
 # ===========================================================================
 async def on_startup(_):
-    await bot.send_message(chat_id=Admins[0], text="Бот запущен!")
-    await ORM.sql_create()
+    for admin in admins:
+        await bot.send_message(chat_id=admin, text="Бот запущен!")
+        await ORM.sql_create()
 
 
 # ===========================================================================
@@ -21,7 +24,3 @@ ORM.sql_get_ORM(dp)
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
-
-
-
-

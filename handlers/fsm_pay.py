@@ -8,6 +8,8 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from handlers import buttons
 from db.ORM import sql_insert_check, sql_insert_payment_request, check_user_has_used_trial
 
+admins = [Admins[0], Admins[1]]
+
 
 class Pay(StatesGroup):
     user_tariff = State()
@@ -90,11 +92,12 @@ async def probnyi_tariff(call: types.CallbackQuery, state: FSMContext):
     await bot.send_message(user_id, text=f"Вы выбрали тариф: Пробный\n"
                                          f"Вот аккаунт психолога - {Psychologist}")
 
-    await bot.send_message(chat_id=Admins[0],
-                           text=f"Пользователь выбрал тариф: Пробный\n"
-                                f"Username: @{username}\n"
-                                f"Fullname: {fullname}",
-                           reply_markup=inline_keyboard)
+    for admin in admins:
+        await bot.send_message(chat_id=admin,
+                               text=f"Пользователь выбрал тариф: Пробный\n "
+                                    f"Username: @{username}\n"
+                                    f"Fullname: {fullname}",
+                               reply_markup=inline_keyboard)
 
     await bot.delete_message(chat_id=call.message.chat.id,
                              message_id=call.message.message_id)
@@ -134,7 +137,7 @@ async def process_receipt(message: types.Message, state: FSMContext):
         data["photo_check"] = photo_check
         data["user_id"] = user_id
         data["user_name"] = username
-    for admin in Admins:
+    for admin in admins:
         await bot.send_photo(chat_id=admin,
                              photo=photo_check,
                              caption=f"Поступила ли оплата от @{message.from_user.username}\n"
